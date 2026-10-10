@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5">
+  <title>Cuanin</title>
+  <script>
+    /* Pasang tema sebelum halaman tampil agar tidak berkedip */
+    try {
+      var t = localStorage.getItem("cuanin-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/"><span class="logo">C</span>Cuanin</a>
+      <div class="nav-actions">
+        <div id="navAuth" class="nav-actions" hidden>
+          <button class="btn ghost sm" data-go="login">Masuk</button>
+          <button class="btn sm" data-go="register">Daftar</button>
+        </div>
+        <div id="userbox" class="nav-actions" hidden>
+          <span class="avatar" id="userAvatar"></span>
+          <span class="user-name" id="userName"></span>
+          <button id="logoutBtn" class="btn ghost sm">Keluar</button>
+        </div>
+        <button id="themeBtn" class="icon-btn" aria-label="Ganti mode tampilan" title="Ganti mode terang/gelap"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- LANDING -->
+    <section id="view-landing" class="view hero" hidden>
+      <div class="hero-text">
+        <span class="pill">Jualan Tetangga, Cuan Bersama</span>
+        <h1>Bantu UMKM Sekitar Laku, Dapat Komisi Tanpa Modal !!</h1>
+        <p class="lead">Cuanin mempertemukan pemilik usaha kecil dengan warga yang mau membantu menjualkan. Cukup bagikan link produk, dan setiap kali ada yang membeli, uangnya langsung terbagi otomatis.</p>
+        <div class="cta">
+          <button class="btn" data-go="register">Daftar Gratis</button>
+          <button class="btn ghost" data-go="login">Masuk</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Cara Kerjanya</h2>
+        <ol class="steps">
+          <li><div><b>UMKM menitipkan produk</b><span>Pelapak mengisi harga dan menentukan komisi untuk Mitra.</span></div></li>
+          <li><div><b>Warga bantu jual</b><span>Mitra melihat produk dalam radius 5 km dan membagikan link uniknya.</span></div></li>
+          <li><div><b>Bayar, lalu uang terbagi</b><span>Sisa harga masuk ke Pelapak, komisi langsung ke Mitra.</span></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- LOGIN -->
+    <section id="view-login" class="view" hidden>
+      <form id="loginForm" class="card auth">
+        <h2>Masuk ke Cuanin</h2>
+        <label>Username <input name="username" autocomplete="username" required></label>
+        <label>Kata sandi <input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn block">Masuk</button>
+        <p class="switch">Belum punya akun? <button type="button" class="link" data-go="register">Daftar</button></p>
+        <div class="demo">
+          <p>Coba cepat dengan akun demo (kata sandi: demo123)</p>
+          <div id="demoChips" class="chips"></div>
+        </div>
+      </form>
+    </section>
+
+    <!-- REGISTER -->
+    <section id="view-register" class="view" hidden>
+      <form id="registerForm" class="card auth">
+        <h2>Buat akun baru</h2>
+        <div class="seg" id="regSeg">
+          <button type="button" class="seg-btn active" data-role="pelapak">Pelapak (UMKM)</button>
+          <button type="button" class="seg-btn" data-role="mitra">Mitra (Warga)</button>
+        </div>
+        <label>Nama <input name="name" placeholder="Nama usaha atau nama Anda" required></label>
+        <label>Username <input name="username" autocomplete="username" placeholder="huruf kecil, angka, _" required></label>
+        <label>Kata sandi <input name="password" type="password" autocomplete="new-password" minlength="4" required></label>
+        <p id="regHint" class="hint">Lokasi Anda dipakai agar Mitra sekitar bisa menemukan produk. Jika izin lokasi ditolak, dipakai lokasi contoh (Surakarta).</p>
+        <button class="btn block">Daftar</button>
+        <p class="switch">Sudah punya akun? <button type="button" class="link" data-go="login">Masuk</button></p>
+      </form>
+    </section>
+
+    <!-- DASHBOARD PELAPAK -->
+    <section id="view-pelapak" class="view" hidden>
+      <div class="page-head"><h1>Dashboard Pelapak</h1><p class="muted">Kelola produk dan pantau penjualan dari Mitra.</p></div>
+      <div class="stats">
+        <div class="stat primary"><span>Saldo</span><strong id="statBalance">Rp 0</strong></div>
+        <div class="stat"><span>Produk</span><strong id="statProducts">0</strong></div>
+        <div class="stat"><span>Penjualan</span><strong id="statSales">0</strong></div>
+      </div>
+      <div class="two-col">
+        <form id="productForm" class="card form">
+          <h2>Tambah produk</h2>
+          <label>Nama barang <input name="name" placeholder="Contoh: Nasi Liwet" required></label>
+          <label>Harga jual (Rp) <input name="price" type="number" min="1" required></label>
+          <label>Komisi Mitra (Rp) <input name="commission" type="number" min="0" required></label>
+          <button class="btn block">Simpan produk</button>
+        </form>
+        <div class="card">
+          <h2>Produk saya</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Nama</th><th>Harga</th><th>Komisi</th><th>Diterima</th><th></th></tr></thead>
+              <tbody id="productTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <h2 class="section-title">Penjualan masuk</h2>
+      <ul id="pelapakTrx" class="list"></ul>
+    </section>
+
+    <!-- DASHBOARD MITRA -->
+    <section id="view-mitra" class="view" hidden>
+      <div class="page-head"><h1>Dashboard Mitra</h1><p class="muted">Pilih produk tetangga, bagikan linknya, dan terima komisi.</p></div>
+      <div class="stats two">
+        <div class="stat primary"><span>Saldo komisi</span><strong id="mStatBalance">Rp 0</strong></div>
+        <div class="stat"><span>Penjualan</span><strong id="mStatSales">0</strong></div>
+      </div>
+      <div class="between">
+        <h2 class="section-title">Produk di sekitar Anda</h2>
+        <button id="refreshGeo" class="btn ghost sm">Perbarui lokasi</button>
+      </div>
+      <p id="geoStatus" class="geo muted">Mencari lokasi...</p>
+      <div id="catalog" class="grid"></div>
+      <h2 class="section-title">Riwayat komisi</h2>
+      <ul id="mitraTrx" class="list"></ul>
+    </section>
+
+    <!-- CHECKOUT -->
+    <section id="view-checkout" class="view" hidden>
+      <div class="card checkout">
+        <span class="pill" id="coSeller"></span>
+        <h2 id="coName"></h2>
+        <p class="price" id="coPrice"></p>
+        <button id="payBtn" class="btn block">Bayar sekarang</button>
+        <div id="receipt" class="receipt" hidden></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
