@@ -37,16 +37,16 @@
     <!-- LANDING -->
     <section id="view-landing" class="view hero" hidden>
       <div class="hero-text">
-        <span class="pill">Jualan Tetangga, Cuan Bersama</span>
-        <h1>Bantu UMKM Sekitar Laku, Dapat Komisi Tanpa Modal !!</h1>
+        <span class="pill">Jualan tetangga, cuan bersama</span>
+        <h1>Bantu UMKM sekitar laku, dapat komisi tanpa modal.</h1>
         <p class="lead">Cuanin mempertemukan pemilik usaha kecil dengan warga yang mau membantu menjualkan. Cukup bagikan link produk, dan setiap kali ada yang membeli, uangnya langsung terbagi otomatis.</p>
         <div class="cta">
-          <button class="btn" data-go="register">Daftar Gratis</button>
+          <button class="btn" data-go="register">Daftar gratis</button>
           <button class="btn ghost" data-go="login">Masuk</button>
         </div>
       </div>
       <div class="card">
-        <h2>Cara Kerjanya</h2>
+        <h2>Cara kerjanya</h2>
         <ol class="steps">
           <li><div><b>UMKM menitipkan produk</b><span>Pelapak mengisi harga dan menentukan komisi untuk Mitra.</span></div></li>
           <li><div><b>Warga bantu jual</b><span>Mitra melihat produk dalam radius 5 km dan membagikan link uniknya.</span></div></li>
@@ -126,7 +126,14 @@
       </div>
       <div class="between">
         <h2 class="section-title">Produk di sekitar Anda</h2>
-        <button id="refreshGeo" class="btn ghost sm">Perbarui lokasi</button>
+        <div class="nav-actions">
+          <select id="radiusSelect" class="sm-select" aria-label="Radius pencarian">
+            <option value="1">1 km</option><option value="5" selected>5 km</option>
+            <option value="10">10 km</option><option value="25">25 km</option>
+            <option value="50">50 km</option><option value="100">100 km</option>
+          </select>
+          <button id="refreshGeo" class="btn ghost sm">Perbarui lokasi</button>
+        </div>
       </div>
       <p id="geoStatus" class="geo muted">Mencari lokasi...</p>
       <div id="catalog" class="grid"></div>

@@ -154,7 +154,10 @@ def catalog():
         lat, lng = float(request.args["lat"]), float(request.args["lng"])
     except (KeyError, ValueError):
         return err("Parameter lat & lng wajib diisi.")
-    radius = float(request.args.get("radius", DEFAULT_RADIUS_KM))
+    try:
+        radius = min(max(float(request.args.get("radius", DEFAULT_RADIUS_KM)), 0.5), 500)  # batasi 0,5-500 km
+    except ValueError:
+        radius = DEFAULT_RADIUS_KM
     result = []
     for p in PRODUCTS.values():
         s = USERS[p["pelapak_id"]]

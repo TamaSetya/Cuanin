@@ -141,7 +141,8 @@ async function loadCatalog() {
   $("catalog").innerHTML = '<div class="skeleton"></div>'.repeat(3);
   const loc = await getLocation();
   // Koordinat dikirim ke Flask; filter jarak (Haversine) dijalankan di Python
-  const data = await api(`/api/products?lat=${loc.lat}&lng=${loc.lng}&radius=5`);
+  const radius = $("radiusSelect").value;
+  const data = await api(`/api/products?lat=${loc.lat}&lng=${loc.lng}&radius=${radius}`);
   $("geoStatus").textContent = (loc.fallback ? "Lokasi tidak tersedia, memakai lokasi contoh (Surakarta). " : "Lokasi terdeteksi. ")
     + `Menampilkan produk dalam radius ${data.radius_km} km.`;
   $("catalog").innerHTML = data.products.length
@@ -156,7 +157,7 @@ async function loadCatalog() {
         <button class="btn" data-id="${p.id}">Bantu jual</button>
         <div class="linkbox" id="link-${p.id}" hidden></div>
       </article>`).join("")
-    : `<p class="empty">Belum ada produk dalam radius ini.</p>`;
+    : `<p class="empty">Belum ada produk dalam radius ${data.radius_km} km dari lokasi Anda. Coba perbesar radius di pojok kanan atas.</p>`;
   await loadWallet("mitraTrx");
 }
 
@@ -172,6 +173,7 @@ $("catalog").addEventListener("click", async (e) => {
   } catch (err) { toast(err.message, true); }
 });
 $("refreshGeo").addEventListener("click", loadCatalog);
+$("radiusSelect").addEventListener("change", loadCatalog);
 
 // ---------- RIWAYAT / SALDO ----------
 async function loadWallet(listId) {
